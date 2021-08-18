@@ -2,13 +2,14 @@ import torch
 from utils.utils import to_cuda
 import numpy as np
 import torch.nn as nn
+from torchinfo import summary
 
 def filter_samples(samples, threshold=0.05):
     batch_size_full = len(samples['data'])
     min_dist = torch.min(samples['dist2center'], dim=1)[0]
     mask = min_dist < threshold
 
-    filtered_data = [samples['data'][m] 
+    filtered_data = [samples['data'][m]
 		for m in range(mask.size(0)) if mask[m].item() == 1]
     filtered_label = torch.masked_select(samples['label'], mask)
     filtered_gt = torch.masked_select(samples['gt'], mask) \
@@ -26,7 +27,7 @@ def filter_samples(samples, threshold=0.05):
 
 def filter_class(labels, num_min, num_classes):
     filted_classes = []
-    for c in range(num_classes):   
+    for c in range(num_classes):
         mask = (labels == c)
         count = torch.sum(mask).item()
         if count >= num_min:
@@ -35,7 +36,7 @@ def filter_class(labels, num_min, num_classes):
     return filted_classes
 
 def split_samples_classwise(samples, num_classes):
-    data = samples['data'] 
+    data = samples['data']
     label = samples['label']
     gt = samples['gt']
     samples_list = []
@@ -80,18 +81,22 @@ def set_param_groups(net, lr_mult_dict):
 
     return params
 
-def get_centers(net, dataloader, num_classes, key='feat'):        
-    centers = 0 
+def get_centers(net, dataloader, num_classes, key='feat', debug=False):
+    centers = 0
     refs = to_cuda(torch.LongTensor(range(num_classes)).unsqueeze(1))
     for sample in iter(dataloader):
         data = to_cuda(sample['Img'])
         gt = to_cuda(sample['Label'])
         batch_size = data.size(0)
 
+        if debug:
+            print("Input shape:", data.shape)
+            summary(net, input_size=data.shape)
+
         output = net.forward(data)[key]
-        feature = output.data 
+        feature = output.data
         feat_len = feature.size(1)
-    
+
         gt = gt.unsqueeze(0).expand(num_classes, -1)
         mask = (gt == refs).unsqueeze(2).type(torch.cuda.FloatTensor)
         feature = feature.unsqueeze(0)
@@ -99,4 +104,3 @@ def get_centers(net, dataloader, num_classes, key='feat'):
         centers += torch.sum(feature * mask, dim=1)
 
     return centers
-

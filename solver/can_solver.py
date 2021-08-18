@@ -25,12 +25,12 @@ class CANSolver(BaseSolver):
 
         num_layers = len(self.net.module.FC) + 1
         self.cdd = CDD(kernel_num=self.opt.CDD.KERNEL_NUM, kernel_mul=self.opt.CDD.KERNEL_MUL,
-                  num_layers=num_layers, num_classes=self.opt.DATASET.NUM_CLASSES, 
+                  num_layers=num_layers, num_classes=self.opt.DATASET.NUM_CLASSES,
                   intra_only=self.opt.CDD.INTRA_ONLY)
 
         self.discrepancy_key = 'intra' if self.opt.CDD.INTRA_ONLY else 'cdd'
-        self.clustering = clustering.Clustering(self.opt.CLUSTERING.EPS, 
-                                        self.opt.CLUSTERING.FEAT_KEY, 
+        self.clustering = clustering.Clustering(self.opt.CLUSTERING.EPS,
+                                        self.opt.CLUSTERING.FEAT_KEY,
                                         self.opt.CLUSTERING.BUDGET)
 
         self.clustered_target_samples = {}
@@ -51,7 +51,7 @@ class CANSolver(BaseSolver):
 
         # target centers along training
         target_centers = self.history['target_centers']
-        eval1 = torch.mean(self.clustering.Dist.get_dist(target_centers[-1], 
+        eval1 = torch.mean(self.clustering.Dist.get_dist(target_centers[-1],
 			target_centers[-2])).item()
 
         # target-source center distances along training
@@ -78,7 +78,7 @@ class CANSolver(BaseSolver):
             self.iters += 1
             self.loop += 1
 
-        while True: 
+        while True:
             # updating the target label hypothesis through clustering
             target_hypt = {}
             filtered_classes = []
@@ -87,8 +87,8 @@ class CANSolver(BaseSolver):
                 print('Clustering based on %s...' % self.source_name)
                 self.update_labels()
                 self.clustered_target_samples = self.clustering.samples
-                target_centers = self.clustering.centers 
-                center_change = self.clustering.center_change 
+                target_centers = self.clustering.centers
+                center_change = self.clustering.center_change
                 path2label = self.clustering.path2label
 
                 # updating the history
@@ -101,7 +101,7 @@ class CANSolver(BaseSolver):
 
                 if self.clustered_target_samples is not None and \
                               self.clustered_target_samples['gt'] is not None:
-                    preds = to_onehot(self.clustered_target_samples['label'], 
+                    preds = to_onehot(self.clustered_target_samples['label'],
                                                 self.opt.DATASET.NUM_CLASSES)
                     gts = self.clustered_target_samples['gt']
                     res = self.model_eval(preds, gts)
@@ -110,7 +110,7 @@ class CANSolver(BaseSolver):
                 # check if meet the stop condition
                 stop = self.complete_training()
                 if stop: break
-                
+
                 # filtering the clustering results
                 target_hypt, filtered_classes = self.filtering()
 
@@ -124,7 +124,7 @@ class CANSolver(BaseSolver):
             self.loop += 1
 
         print('Training Done!')
-        
+
     def update_labels(self):
         net = self.net
         net.eval()
@@ -133,8 +133,8 @@ class CANSolver(BaseSolver):
         source_dataloader = self.train_data[self.clustering_source_name]['loader']
         net.module.set_bn_domain(self.bn_domain_map[self.source_name])
 
-        source_centers = solver_utils.get_centers(net, 
-		source_dataloader, self.opt.DATASET.NUM_CLASSES, 
+        source_centers = solver_utils.get_centers(net,
+		source_dataloader, self.opt.DATASET.NUM_CLASSES,
                 self.opt.CLUSTERING.FEAT_KEY)
         init_target_centers = source_centers
 
@@ -183,13 +183,13 @@ class CANSolver(BaseSolver):
         target_samples = samples['Img_target']
         target_sample_paths = samples['Path_target']
         target_nums = [len(paths) for paths in target_sample_paths]
-        
+
         source_sample_labels = samples['Label_source']
         self.selected_classes = [labels[0].item() for labels in source_sample_labels]
-        assert(self.selected_classes == 
+        assert(self.selected_classes ==
                [labels[0].item() for labels in  samples['Label_target']])
         return source_samples, source_nums, target_samples, target_nums
-            
+
     def prepare_feats(self, feats):
         return [feats[key] for key in feats if key in self.opt.CDD.ALIGNMENT_FEAT_KEYS]
 
@@ -220,7 +220,7 @@ class CANSolver(BaseSolver):
             cdd_loss_iter = 0
 
             # coventional sampling for training on labeled source data
-            source_sample = self.get_samples(self.source_name) 
+            source_sample = self.get_samples(self.source_name)
             source_data, source_gt = source_sample['Img'],\
                           source_sample['Label']
 
@@ -235,7 +235,7 @@ class CANSolver(BaseSolver):
 
             ce_loss_iter += ce_loss
             loss += ce_loss
-         
+
             if len(filtered_classes) > 0:
                 # update the network parameters
                 # 1) class-aware sampling
@@ -243,9 +243,9 @@ class CANSolver(BaseSolver):
                        target_samples_cls, target_nums_cls = self.CAS()
 
                 # 2) forward and compute the loss
-                source_cls_concat = torch.cat([to_cuda(samples) 
+                source_cls_concat = torch.cat([to_cuda(samples)
                             for samples in source_samples_cls], dim=0)
-                target_cls_concat = torch.cat([to_cuda(samples) 
+                target_cls_concat = torch.cat([to_cuda(samples)
                             for samples in target_samples_cls], dim=0)
 
                 self.net.module.set_bn_domain(self.bn_domain_map[self.source_name])
@@ -255,9 +255,9 @@ class CANSolver(BaseSolver):
 
                 # prepare the features
                 feats_toalign_S = self.prepare_feats(feats_source)
-                feats_toalign_T = self.prepare_feats(feats_target)                 
+                feats_toalign_T = self.prepare_feats(feats_target)
 
-                cdd_loss = self.cdd.forward(feats_toalign_S, feats_toalign_T, 
+                cdd_loss = self.cdd.forward(feats_toalign_S, feats_toalign_T,
                                source_nums_cls, target_nums_cls)[self.discrepancy_key]
 
                 cdd_loss *= self.opt.CDD.LOSS_WEIGHT
@@ -284,7 +284,7 @@ class CANSolver(BaseSolver):
                 with torch.no_grad():
                     self.net.module.set_bn_domain(self.bn_domain_map[self.target_name])
                     accu = self.test()
-                    print('Test at (loop %d, iters: %d) with %s: %.4f.' % (self.loop, 
+                    print('Test at (loop %d, iters: %d) with %s: %.4f.' % (self.loop,
                               self.iters, self.opt.EVAL_METRIC, accu))
 
             if self.opt.TRAIN.SAVE_CKPT_INTERVAL > 0 and \
@@ -299,4 +299,3 @@ class CANSolver(BaseSolver):
                 stop = True
             else:
                 stop = False
-

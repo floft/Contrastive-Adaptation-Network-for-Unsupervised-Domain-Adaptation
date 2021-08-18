@@ -1,7 +1,9 @@
+import torch
 import os
 from .image_folder import make_dataset_with_labels, make_dataset
 from PIL import Image
 from torch.utils.data import Dataset
+import numpy as np
 
 class BaseDataset(Dataset):
     def __init__(self):
@@ -12,10 +14,12 @@ class BaseDataset(Dataset):
 
     def __getitem__(self, index):
         path = self.data_paths[index]
-        img = Image.open(path).convert('RGB')
-        if self.transform is not None:
-            img = self.transform(img)
-        label = self.data_labels[index] 
+        # img = Image.open(path).convert('RGB')
+        img = np.load(path, allow_pickle=False)
+        img = torch.from_numpy(img)
+        # if self.transform is not None:
+        #     img = self.transform(img)
+        label = self.data_labels[index]
 
         return {'Path': path, 'Img': img, 'Label': label}
 
@@ -50,9 +54,11 @@ class BaseDatasetWithoutLabel(Dataset):
 
     def __getitem__(self, index):
         path = self.data_paths[index]
-        img = Image.open(path).convert('RGB')
-        if self.transform is not None:
-            img = self.transform(img)
+        # img = Image.open(path).convert('RGB')
+        img = np.load(path, allow_pickle=False)
+        img = torch.from_numpy(img)
+        # if self.transform is not None:
+        #     img = self.transform(img)
 
         return {'Path': path, 'Img': img}
 
@@ -71,5 +77,3 @@ class SingleDatasetWithoutLabel(BaseDatasetWithoutLabel):
 
     def name(self):
         return 'SingleDatasetWithoutLabel'
-
-

@@ -1,11 +1,11 @@
-from . import resnet 
+from . import resnet, timeseries
 from .domain_specific_module import BatchNormDomain
 from utils import utils
 from . import utils as model_utils
 import torch.nn as nn
 import torch.nn.functional as F
 
-backbones = [resnet]
+backbones = [resnet, timeseries]
 
 class FC_BN_ReLU_Domain(nn.Module):
     def __init__(self, in_dim, out_dim, num_domains_bn):
@@ -27,12 +27,12 @@ class FC_BN_ReLU_Domain(nn.Module):
         return x
 
 class DANet(nn.Module):
-    def __init__(self, num_classes, feature_extractor='resnet101', 
-                 fx_pretrained=True, fc_hidden_dims=[], frozen=[], 
+    def __init__(self, num_classes, feature_extractor='resnet101',
+                 fx_pretrained=True, fc_hidden_dims=[], frozen=[],
                  num_domains_bn=2, dropout_ratio=(0.5,)):
         super(DANet, self).__init__()
         self.feature_extractor = utils.find_class_by_name(
-               feature_extractor, backbones)(pretrained=fx_pretrained, 
+               feature_extractor, backbones)(pretrained=fx_pretrained,
                frozen=frozen, num_domains=num_domains_bn)
 
         self.bn_domain = 0
@@ -51,7 +51,7 @@ class DANet(nn.Module):
                       else 0.0
             self.dropout[str(k)] = nn.Dropout(p=cur_dropout_ratio)
             out_dim = fc_hidden_dims[k]
-            self.FC[str(k)] = FC_BN_ReLU_Domain(in_dim, out_dim, 
+            self.FC[str(k)] = FC_BN_ReLU_Domain(in_dim, out_dim,
                   num_domains_bn)
             in_dim = out_dim
 
@@ -94,14 +94,14 @@ class DANet(nn.Module):
 
         return to_select
 
-def danet(num_classes, feature_extractor, fx_pretrained=True, 
-          frozen=[], dropout_ratio=0.5, state_dict=None, 
+def danet(num_classes, feature_extractor, fx_pretrained=True,
+          frozen=[], dropout_ratio=0.5, state_dict=None,
           fc_hidden_dims=[], num_domains_bn=1, **kwargs):
 
-    model = DANet(feature_extractor=feature_extractor, 
-                num_classes=num_classes, frozen=frozen, 
-                fx_pretrained=fx_pretrained, 
-                dropout_ratio=dropout_ratio, 
+    model = DANet(feature_extractor=feature_extractor,
+                num_classes=num_classes, frozen=frozen,
+                fx_pretrained=fx_pretrained,
+                dropout_ratio=dropout_ratio,
                 fc_hidden_dims=fc_hidden_dims,
                 num_domains_bn=num_domains_bn, **kwargs)
 

@@ -5,19 +5,20 @@ from torch.utils.data import Dataset
 import random
 from math import ceil
 import torch
+import numpy as np
 
 class CategoricalDataset(Dataset):
     def __init__(self):
         super(CategoricalDataset, self).__init__()
 
-    def initialize(self, root, classnames, class_set, 
-                  batch_size, seed=None, transform=None, 
+    def initialize(self, root, classnames, class_set,
+                  batch_size, seed=None, transform=None,
                   **kwargs):
 
         self.root = root
         self.transform = transform
         self.class_set = class_set
-        
+
         self.data_paths = {}
         self.data_paths[self.root] = {}
         cid = 0
@@ -40,7 +41,7 @@ class CategoricalDataset(Dataset):
         data = {}
         root = self.root
         cur_paths = self.data_paths[root]
-        
+
         if self.seed is not None:
             random.seed(self.seed)
 
@@ -51,9 +52,11 @@ class CategoricalDataset(Dataset):
         data['Path'] = path
         assert(len(path) > 0)
         for p in path:
-            img = Image.open(p).convert('RGB')
-            if self.transform is not None:
-                img = self.transform(img)
+            # img = Image.open(p).convert('RGB')
+            img = np.load(p, allow_pickle=False)
+            img = torch.from_numpy(img)
+            # if self.transform is not None:
+            #     img = self.transform(img)
 
             if not isinstance(img, torch.Tensor):
                 img = torch.tensor(img)
@@ -78,9 +81,9 @@ class CategoricalSTDataset(Dataset):
         super(CategoricalSTDataset, self).__init__()
 
     def initialize(self, source_root, target_paths,
-                  classnames, class_set, 
-                  source_batch_size, 
-                  target_batch_size, seed=None, 
+                  classnames, class_set,
+                  source_batch_size,
+                  target_batch_size, seed=None,
                   transform=None, **kwargs):
 
         self.source_root = source_root
@@ -88,7 +91,7 @@ class CategoricalSTDataset(Dataset):
 
         self.transform = transform
         self.class_set = class_set
-        
+
         self.data_paths = {}
         self.data_paths['source'] = {}
         cid = 0
@@ -129,9 +132,11 @@ class CategoricalSTDataset(Dataset):
             data['Path_'+d] = path
             assert(len(path) > 0)
             for p in path:
-                img = Image.open(p).convert('RGB')
-                if self.transform is not None:
-                    img = self.transform(img)
+                # img = Image.open(p).convert('RGB')
+                img = np.load(p, allow_pickle=False)
+                img = torch.from_numpy(img)
+                # if self.transform is not None:
+                #     img = self.transform(img)
 
                 if 'Img_'+d not in data:
                     data['Img_'+d] = [img]
@@ -148,4 +153,3 @@ class CategoricalSTDataset(Dataset):
 
     def name(self):
         return 'CategoricalSTDataset'
-
