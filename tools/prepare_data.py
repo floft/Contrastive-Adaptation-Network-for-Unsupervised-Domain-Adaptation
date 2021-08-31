@@ -11,7 +11,10 @@ def prepare_data_CAN():
 
     source = cfg.DATASET.SOURCE_NAME
     target = cfg.DATASET.TARGET_NAME
-    dataroot_S = os.path.join(cfg.DATASET.DATAROOT, source)
+    dataroot_S = [
+        os.path.join(cfg.DATASET.DATAROOT, s)
+        for s in source
+    ]
     dataroot_T = os.path.join(cfg.DATASET.DATAROOT, target)
 
     with open(os.path.join(cfg.DATASET.DATAROOT, 'category.txt'), 'r') as f:
@@ -23,14 +26,14 @@ def prepare_data_CAN():
     batch_size = cfg.CLUSTERING.SOURCE_BATCH_SIZE
     dataset_type = 'SingleDataset'
     print('Building clustering_%s dataloader...' % source)
-    dataloaders['clustering_' + source] = CustomDatasetDataLoader(
+    dataloaders['clustering_' + str(source)] = CustomDatasetDataLoader(
                 dataset_root=dataroot_S, dataset_type=dataset_type,
                 batch_size=batch_size, transform=train_transform,
-                train=False, num_workers=cfg.NUM_WORKERS, 
+                train=False, num_workers=cfg.NUM_WORKERS,
                 classnames=classes)
 
     batch_size = cfg.CLUSTERING.TARGET_BATCH_SIZE
-    dataset_type = cfg.CLUSTERING.TARGET_DATASET_TYPE 
+    dataset_type = cfg.CLUSTERING.TARGET_DATASET_TYPE
     print('Building clustering_%s dataloader...' % target)
     dataloaders['clustering_' + target] = CustomDatasetDataLoader(
                 dataset_root=dataroot_T, dataset_type=dataset_type,
@@ -42,10 +45,10 @@ def prepare_data_CAN():
     batch_size = cfg.TRAIN.SOURCE_BATCH_SIZE
     dataset_type = 'SingleDataset'
     print('Building %s dataloader...' % source)
-    dataloaders[source] = CustomDatasetDataLoader(
+    dataloaders[str(source)] = CustomDatasetDataLoader(
                 dataset_root=dataroot_S, dataset_type=dataset_type,
                 batch_size=batch_size, transform=train_transform,
-                train=True, num_workers=cfg.NUM_WORKERS, 
+                train=True, num_workers=cfg.NUM_WORKERS,
                 classnames=classes)
 
     # initialize the categorical dataloader
@@ -54,12 +57,12 @@ def prepare_data_CAN():
     target_batch_size = cfg.TRAIN.TARGET_CLASS_BATCH_SIZE
     print('Building categorical dataloader...')
     dataloaders['categorical'] = ClassAwareDataLoader(
-                dataset_type=dataset_type, 
-                source_batch_size=source_batch_size, 
-                target_batch_size=target_batch_size, 
-                source_dataset_root=dataroot_S, 
-                transform=train_transform, 
-                classnames=classes, 
+                dataset_type=dataset_type,
+                source_batch_size=source_batch_size,
+                target_batch_size=target_batch_size,
+                source_dataset_root=dataroot_S,
+                transform=train_transform,
+                classnames=classes,
                 num_workers=cfg.NUM_WORKERS,
                 drop_last=True, sampler='RandomSampler')
 
@@ -82,7 +85,10 @@ def prepare_data_MMD():
 
     source = cfg.DATASET.SOURCE_NAME
     target = cfg.DATASET.TARGET_NAME
-    dataroot_S = os.path.join(cfg.DATASET.DATAROOT, source)
+    dataroot_S = [
+        os.path.join(cfg.DATASET.DATAROOT, s)
+        for s in source
+    ]
     dataroot_T = os.path.join(cfg.DATASET.DATAROOT, target)
 
     with open(os.path.join(cfg.DATASET.DATAROOT, 'category.txt'), 'r') as f:
@@ -92,10 +98,10 @@ def prepare_data_MMD():
 
     batch_size = cfg.TRAIN.SOURCE_BATCH_SIZE
     dataset_type = 'SingleDataset'
-    dataloaders[source] = CustomDatasetDataLoader(
+    dataloaders[str(source)] = CustomDatasetDataLoader(
                 dataset_root=dataroot_S, dataset_type=dataset_type,
                 batch_size=batch_size, transform=train_transform,
-                train=True, num_workers=cfg.NUM_WORKERS, 
+                train=True, num_workers=cfg.NUM_WORKERS,
                 classnames=classes)
 
     batch_size = cfg.TRAIN.TARGET_BATCH_SIZE
@@ -125,7 +131,10 @@ def prepare_data_SingleDomainSource():
 
     source = cfg.DATASET.SOURCE_NAME
     target = cfg.DATASET.TARGET_NAME
-    dataroot_S = os.path.join(cfg.DATASET.DATAROOT, source)
+    dataroot_S = [
+        os.path.join(cfg.DATASET.DATAROOT, s)
+        for s in source
+    ]
     dataroot_T = os.path.join(cfg.DATASET.DATAROOT, target)
 
     with open(os.path.join(cfg.DATASET.DATAROOT, 'category.txt'), 'r') as f:
@@ -135,10 +144,10 @@ def prepare_data_SingleDomainSource():
 
     batch_size = cfg.TRAIN.SOURCE_BATCH_SIZE
     dataset_type = 'SingleDataset'
-    dataloaders[source] = CustomDatasetDataLoader(
+    dataloaders[str(source)] = CustomDatasetDataLoader(
                 dataset_root=dataroot_S, dataset_type=dataset_type,
                 batch_size=batch_size, transform=train_transform,
-                train=True, num_workers=cfg.NUM_WORKERS, 
+                train=True, num_workers=cfg.NUM_WORKERS,
                 classnames=classes)
 
     batch_size = cfg.TEST.BATCH_SIZE

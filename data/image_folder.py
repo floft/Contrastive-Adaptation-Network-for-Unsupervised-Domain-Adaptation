@@ -20,6 +20,18 @@ def is_image_file(filename):
     return any(filename.endswith(extension) for extension in DATA_EXTENSIONS)
 
 def make_dataset_with_labels(dir, classnames):
+    # Support multiple source domains
+    if isinstance(dir, list):
+        images = []
+        labels = []
+
+        for d in dir:
+            _images, _labels = make_dataset_with_labels(d, classnames)
+            images += _images
+            labels += _labels
+
+        return images, labels
+
     assert os.path.isdir(dir), '%s is not a valid directory' % dir
 
     images = []
@@ -41,6 +53,15 @@ def make_dataset_with_labels(dir, classnames):
     return images, labels
 
 def make_dataset_classwise(dir, category):
+    # Support multiple source domains
+    if isinstance(dir, list):
+        images = []
+
+        for d in dir:
+            images += make_dataset_classwise(d, category)
+
+        return images
+
     assert os.path.isdir(dir), '%s is not a valid directory' % dir
 
     images = []
@@ -56,6 +77,15 @@ def make_dataset_classwise(dir, category):
     return images
 
 def make_dataset(dir):
+    # Support multiple source domains
+    if isinstance(dir, list):
+        images = []
+
+        for d in dir:
+            images += make_dataset(d)
+
+        return images
+
     images = []
     assert os.path.isdir(dir), '%s is not a valid directory' % dir
 

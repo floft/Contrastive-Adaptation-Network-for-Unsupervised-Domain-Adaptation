@@ -1,8 +1,8 @@
 DATASET:
   NUM_CLASSES: 6
   DATAROOT: '/home/garrett/Documents/Github/calda-dev/datasets/as_images/'
-  SOURCE_NAME: 'ucihhar_0_train'
-  TARGET_NAME: 'ucihhar_1_train'
+  SOURCE_NAME: ['ucihhar_0_train', 'ucihhar_1_train']
+  TARGET_NAME: 'ucihhar_2_train'
   IN_CHANNELS: 3
 
 MODEL:
@@ -19,7 +19,7 @@ INV:
 
 TEST:
   BATCH_SIZE: 100
-  DOMAIN: 'ucihhar_1_test'
+  DOMAIN: 'ucihhar_2_test'
 
 EVAL_METRIC: "mean_accu"
 SAVE_DIR: "./experiments/ckpt"
