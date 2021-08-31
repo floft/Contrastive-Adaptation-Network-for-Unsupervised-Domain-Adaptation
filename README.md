@@ -1,5 +1,6 @@
-# Contrastive Adaptation Network 
-Update: 
+# Contrastive Adaptation Network
+**2021-08-31: Modified version for time series datasets, replacing the feature extractor with the time-series compatible feature extractor from CoDATS**
+
 2020-10-17: We have extended our method to the multi-source domain adaptation scenario. Please refer to our TPAMI paper [Contrastive Adaptation Network for Single- and Multi-Source Domain Adaptation](https://ieeexplore.ieee.org/stamp/stamp.jsp?tp=&arnumber=9219132) for more details. We will release our code for the multi-source domain adaptation soon.
 
 2019-11: This is the Pytorch implementation for our CVPR 2019 paper [Contrastive Adaptation Network for Unsupervised Domain Adaptation](http://openaccess.thecvf.com/content_CVPR_2019/papers/Kang_Contrastive_Adaptation_Network_for_Unsupervised_Domain_Adaptation_CVPR_2019_paper.pdf). As we reorganized our code based on a new pytorch version, some hyper-parameters are slightly different from the paper.
@@ -45,6 +46,17 @@ bike_helmet
 ...
 ```
 
+**For VIS-DA 2017**, follow the [official instructions](https://github.com/VisionLearningGroup/taskcv-2017-public/tree/master/classification), but only for the train/validation sets (what is used in the paper):
+
+    cd ./experiments/dataset/VisDA-2017/
+    wget http://csr.bu.edu/ftp/visda17/clf/train.tar
+    wget http://csr.bu.edu/ftp/visda17/clf/validation.tar
+    wget http://csr.bu.edu/ftp/visda17/clf/test.tar
+    tar xvf train.tar
+    tar xvf validation.tar
+    tar xvf test.tar
+    wget https://raw.githubusercontent.com/VisionLearningGroup/taskcv-2017-public/master/classification/data/image_list.txt
+
 ## Training
 ```
 ./experiments/scripts/train.sh ${config_yaml} ${gpu_ids} ${adaptation_method} ${experiment_name}
@@ -58,6 +70,11 @@ for the VisDA-2017 dataset,
 ./experiments/scripts/train.sh ./experiments/config/VisDA-2017/CAN/visda17_train_train2val_cfg.yaml 0 CAN visda17_train2val
 ```
 
+**For the time series training:**
+```
+time ./experiments/scripts/train.sh ./experiments/config/timeseries/CAN/timeseries_train_train2val_cfg.yaml 0 CAN timeseries_train2val
+```
+
 The experiment log file and the saved checkpoints will be stored at ./experiments/ckpt/${experiment_name}
 
 ## Test
@@ -65,12 +82,17 @@ The experiment log file and the saved checkpoints will be stored at ./experiment
 ```
 ./experiments/scripts/test.sh ${config_yaml} 0 ${if_adapted} ${experiment_name}
 ```
-Example: 
+Example:
 ```
 ./experiments/scripts/test.sh ./experiments/config/Office-31/office31_test_amazon_cfg.yaml 0 True visda17_test
 ```
 
-## Citing 
+**For the time series best-target test:**
+```
+time ./experiments/scripts/test_best_target.sh ./experiments/config/timeseries/timeseries_test_val_cfg.yaml 0 True timeseries_train2val timeseries_test
+```
+
+## Citing
 Please cite our paper if you use our code in your research:
 ```
 @article{kangcontrastive,
@@ -93,4 +115,3 @@ If you have any questions, please contact me via kgl.prml@gmail.com.
 
 ## Thanks to third party
 The way of setting configurations is inspired by <https://github.com/rbgirshick/py-faster-rcnn>.
-
