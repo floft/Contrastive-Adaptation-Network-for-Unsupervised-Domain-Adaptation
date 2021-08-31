@@ -8,13 +8,12 @@ __all__ = ['FCN', 'fcn']
 
 class FCN(nn.Module):
 
-    def __init__(self, frozen=[], num_domains=1):
+    def __init__(self, frozen=[], num_domains=1, in_channels=3):
         super(FCN, self).__init__()
         self._num_domains = num_domains
 
         self.layers = nn.Sequential(
-            # TODO probably get in_channels from the dataset somehow...?
-            nn.Conv1d(in_channels=3, out_channels=128, kernel_size=8, padding="same",
+            nn.Conv1d(in_channels=in_channels, out_channels=128, kernel_size=8, padding="same",
                 bias=False),
             nn.BatchNorm1d(128),
             nn.ReLU(),

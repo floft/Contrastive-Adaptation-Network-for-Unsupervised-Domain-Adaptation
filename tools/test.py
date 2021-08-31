@@ -27,7 +27,7 @@ def parse_args():
                         action='store_true',
                         help='if the model is adapted on target')
     parser.add_argument('--exp_name', dest='exp_name',
-                        help='the experiment name', 
+                        help='the experiment name',
                         default='exp', type=str)
     parser.add_argument('--set', dest='set_cfgs',
                         help='set config keys', default=None,
@@ -62,9 +62,9 @@ def prepare_data():
 
     dataset_type = cfg.TEST.DATASET_TYPE
     batch_size = cfg.TEST.BATCH_SIZE
-    dataloader = CustomDatasetDataLoader(dataset_root=dataroot_T, 
-                dataset_type=dataset_type, batch_size=batch_size, 
-                transform=test_transform, train=False, 
+    dataloader = CustomDatasetDataLoader(dataset_root=dataroot_T,
+                dataset_type=dataset_type, batch_size=batch_size,
+                transform=test_transform, train=False,
                 num_workers=cfg.NUM_WORKERS, classnames=classes)
 
     return dataloader
@@ -85,24 +85,25 @@ def test(args):
         fx_pretrained = False
 
     if args.adapted_model:
-        num_domains_bn = 2 
+        num_domains_bn = 2
     else:
         num_domains_bn = 1
 
-    net = model.danet(num_classes=cfg.DATASET.NUM_CLASSES, 
+    net = model.danet(num_classes=cfg.DATASET.NUM_CLASSES,
                  state_dict=model_state_dict,
-                 feature_extractor=cfg.MODEL.FEATURE_EXTRACTOR, 
-                 fx_pretrained=fx_pretrained, 
+                 feature_extractor=cfg.MODEL.FEATURE_EXTRACTOR,
+                 fx_pretrained=fx_pretrained,
                  dropout_ratio=cfg.TRAIN.DROPOUT_RATIO,
                  fc_hidden_dims=cfg.MODEL.FC_HIDDEN_DIMS,
-                 num_domains_bn=num_domains_bn) 
+                 num_domains_bn=num_domains_bn,
+                 in_channels=cfg.DATASET.IN_CHANNELS)
 
     net = torch.nn.DataParallel(net)
 
     if torch.cuda.is_available():
         net.cuda()
 
-    # test 
+    # test
     res = {}
     res['path'], res['preds'], res['gt'], res['probs'] = [], [], [], []
     net.eval()
@@ -114,7 +115,7 @@ def test(args):
 
     with torch.no_grad():
         net.module.set_bn_domain(domain_id)
-        for sample in iter(dataloader): 
+        for sample in iter(dataloader):
             res['path'] += sample['Path']
 
             if cfg.DATA_TRANSFORM.WITH_FIVE_CROP:
@@ -133,7 +134,7 @@ def test(args):
 
             if 'Label' in sample:
                 label = to_cuda(sample['Label'])
-                res['gt'] += [label] 
+                res['gt'] += [label]
             print('Processed %d samples.' % len(res['path']))
 
         preds = torch.cat(res['preds'], dim=0)
@@ -142,9 +143,9 @@ def test(args):
         if 'gt' in res and len(res['gt']) > 0:
             gts = torch.cat(res['gt'], dim=0)
             probs = torch.cat(res['probs'], dim=0)
-        
+
             assert(cfg.EVAL_METRIC == 'mean_accu' or cfg.EVAL_METRIC == 'accuracy')
-            if cfg.EVAL_METRIC == "mean_accu": 
+            if cfg.EVAL_METRIC == "mean_accu":
                 eval_res = mean_accuracy(probs, gts)
                 print('Test mean_accu: %.4f' % (eval_res))
 
@@ -155,7 +156,7 @@ def test(args):
     print('Finished!')
 
 if __name__ == '__main__':
-    cudnn.benchmark = True 
+    cudnn.benchmark = True
     args = parse_args()
 
     print('Called with args:')
@@ -169,7 +170,7 @@ if __name__ == '__main__':
     if args.weights is not None:
         cfg.WEIGHTS = args.weights
     if args.exp_name is not None:
-        cfg.EXP_NAME = args.exp_name 
+        cfg.EXP_NAME = args.exp_name
 
     print('Using config:')
     pprint.pprint(cfg)

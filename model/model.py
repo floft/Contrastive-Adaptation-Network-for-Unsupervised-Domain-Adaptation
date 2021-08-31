@@ -29,11 +29,12 @@ class FC_BN_ReLU_Domain(nn.Module):
 class DANet(nn.Module):
     def __init__(self, num_classes, feature_extractor='resnet101',
                  fx_pretrained=True, fc_hidden_dims=[], frozen=[],
-                 num_domains_bn=2, dropout_ratio=(0.5,)):
+                 num_domains_bn=2, dropout_ratio=(0.5,), in_channels=3):
         super(DANet, self).__init__()
         self.feature_extractor = utils.find_class_by_name(
                feature_extractor, backbones)(pretrained=fx_pretrained,
-               frozen=frozen, num_domains=num_domains_bn)
+               frozen=frozen, num_domains=num_domains_bn,
+               in_channels=in_channels)
 
         self.bn_domain = 0
         self.num_domains_bn = num_domains_bn
@@ -96,14 +97,15 @@ class DANet(nn.Module):
 
 def danet(num_classes, feature_extractor, fx_pretrained=True,
           frozen=[], dropout_ratio=0.5, state_dict=None,
-          fc_hidden_dims=[], num_domains_bn=1, **kwargs):
+          fc_hidden_dims=[], num_domains_bn=1, in_channels=3, **kwargs):
 
     model = DANet(feature_extractor=feature_extractor,
                 num_classes=num_classes, frozen=frozen,
                 fx_pretrained=fx_pretrained,
                 dropout_ratio=dropout_ratio,
                 fc_hidden_dims=fc_hidden_dims,
-                num_domains_bn=num_domains_bn, **kwargs)
+                num_domains_bn=num_domains_bn,
+                in_channels=in_channels, **kwargs)
 
     if state_dict is not None:
         model_utils.init_weights(model, state_dict, num_domains_bn, False)
