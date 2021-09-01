@@ -1,0 +1,17 @@
+DATASET:
+  NUM_CLASSES: 6
+  DATAROOT: '../calda-dev/datasets/as_images/'
+  IN_CHANNELS: 3
+
+MODEL:
+  FEATURE_EXTRACTOR: 'fcn'
+
+TEST:
+  BATCH_SIZE: 100
+  DOMAIN: "wisdm_ar_7_test"
+
+EVAL_METRIC: "mean_accu"
+SAVE_DIR: "./experiments/ckpt1"
+NUM_WORKERS: 8
+# set the path to the trained model here
+WEIGHTS: "./experiments/ckpt1/${experiment_name}/ckpt_*.weights"

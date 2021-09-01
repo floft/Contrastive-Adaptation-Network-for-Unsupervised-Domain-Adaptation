@@ -1,0 +1,38 @@
+DATASET:
+  NUM_CLASSES: 6
+  DATAROOT: '../calda-dev/datasets/as_images/'
+  SOURCE_NAME: ['wisdm_at_0_train', 'wisdm_at_1_train', 'wisdm_at_2_train', 'wisdm_at_3_train', 'wisdm_at_4_train', 'wisdm_at_5_train', 'wisdm_at_8_train', 'wisdm_at_9_train', 'wisdm_at_10_train', 'wisdm_at_11_train', 'wisdm_at_12_train', 'wisdm_at_14_train', 'wisdm_at_15_train', 'wisdm_at_17_train', 'wisdm_at_18_train', 'wisdm_at_19_train', 'wisdm_at_20_train', 'wisdm_at_21_train', 'wisdm_at_23_train', 'wisdm_at_24_train', 'wisdm_at_25_train', 'wisdm_at_26_train', 'wisdm_at_27_train', 'wisdm_at_28_train', 'wisdm_at_30_train', 'wisdm_at_31_train', 'wisdm_at_32_train', 'wisdm_at_33_train', 'wisdm_at_34_train', 'wisdm_at_36_train', 'wisdm_at_37_train', 'wisdm_at_38_train', 'wisdm_at_39_train', 'wisdm_at_40_train', 'wisdm_at_41_train', 'wisdm_at_42_train', 'wisdm_at_43_train', 'wisdm_at_44_train', 'wisdm_at_45_train', 'wisdm_at_48_train', 'wisdm_at_49_train', 'wisdm_at_50_train']
+  TARGET_NAME: "wisdm_at_7_train"
+  IN_CHANNELS: 3
+
+MODEL:
+  FEATURE_EXTRACTOR: 'fcn'
+
+TRAIN:
+  SOURCE_BATCH_SIZE: 30
+  SOURCE_CLASS_BATCH_SIZE: 10
+  TARGET_CLASS_BATCH_SIZE: 10
+  NUM_SELECTED_CLASSES: 6
+  LR_SCHEDULE: inv
+  UPDATE_EPOCH_PERCENTAGE: 0.2
+
+CLUSTERING:
+  TARGET_BATCH_SIZE: 600
+  SOURCE_BATCH_SIZE: 600
+  BUDGET: 1000
+  FILTERING_THRESHOLD: 1.0
+
+INV:
+  ALPHA: 0.0005
+  BETA: 2.25
+
+CDD:
+  LOSS_WEIGHT: 0.3
+
+TEST:
+  BATCH_SIZE: 100
+  DOMAIN: "wisdm_at_7_test"
+
+EVAL_METRIC: "mean_accu"
+SAVE_DIR: "./experiments/ckpt1"
+NUM_WORKERS: 8

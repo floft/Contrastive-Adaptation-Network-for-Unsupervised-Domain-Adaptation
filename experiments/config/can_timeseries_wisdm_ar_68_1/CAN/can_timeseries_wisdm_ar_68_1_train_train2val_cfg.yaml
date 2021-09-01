@@ -1,0 +1,38 @@
+DATASET:
+  NUM_CLASSES: 6
+  DATAROOT: '../calda-dev/datasets/as_images/'
+  SOURCE_NAME: ['wisdm_ar_0_train', 'wisdm_ar_2_train', 'wisdm_ar_3_train', 'wisdm_ar_5_train', 'wisdm_ar_7_train', 'wisdm_ar_8_train', 'wisdm_ar_10_train', 'wisdm_ar_11_train', 'wisdm_ar_12_train', 'wisdm_ar_13_train', 'wisdm_ar_14_train', 'wisdm_ar_15_train', 'wisdm_ar_16_train', 'wisdm_ar_17_train', 'wisdm_ar_18_train', 'wisdm_ar_19_train', 'wisdm_ar_20_train', 'wisdm_ar_21_train', 'wisdm_ar_22_train', 'wisdm_ar_24_train', 'wisdm_ar_25_train', 'wisdm_ar_26_train', 'wisdm_ar_27_train', 'wisdm_ar_28_train', 'wisdm_ar_29_train', 'wisdm_ar_31_train']
+  TARGET_NAME: "wisdm_ar_23_train"
+  IN_CHANNELS: 3
+
+MODEL:
+  FEATURE_EXTRACTOR: 'fcn'
+
+TRAIN:
+  SOURCE_BATCH_SIZE: 30
+  SOURCE_CLASS_BATCH_SIZE: 10
+  TARGET_CLASS_BATCH_SIZE: 10
+  NUM_SELECTED_CLASSES: 6
+  LR_SCHEDULE: inv
+  UPDATE_EPOCH_PERCENTAGE: 0.2
+
+CLUSTERING:
+  TARGET_BATCH_SIZE: 600
+  SOURCE_BATCH_SIZE: 600
+  BUDGET: 1000
+  FILTERING_THRESHOLD: 1.0
+
+INV:
+  ALPHA: 0.0005
+  BETA: 2.25
+
+CDD:
+  LOSS_WEIGHT: 0.3
+
+TEST:
+  BATCH_SIZE: 100
+  DOMAIN: "wisdm_ar_23_test"
+
+EVAL_METRIC: "mean_accu"
+SAVE_DIR: "./experiments/ckpt1"
+NUM_WORKERS: 8
