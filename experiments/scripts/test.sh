@@ -2,7 +2,7 @@
 
 export PYTHONPATH="`pwd`:${PYTHONPATH}"
 if [ $# != 4 ]
-then 
+then
   echo "Please specify 1) cfg; 2) gpus; 3) if adapted; 4) exp_name."
   exit
 fi
@@ -21,10 +21,10 @@ mkdir -p ${out_dir}
 
 if [ x${adapted} = x"True" ]
 then
-  CUDA_VISIBLE_DEVICES=${gpus} python ./tools/test.py --cfg ${cfg} --adapted \
+  CUDA_VISIBLE_DEVICES=${gpus} python3 ./tools/test.py --cfg ${cfg} --adapted \
                --exp_name ${exp_name} 2>&1 | tee ${out_dir}/log.txt
 else
-  CUDA_VISIBLE_DEVICES=${gpus} python ./tools/test.py --cfg ${cfg} \
+  CUDA_VISIBLE_DEVICES=${gpus} python3 ./tools/test.py --cfg ${cfg} \
                --exp_name ${exp_name} 2>&1 | tee ${out_dir}/log.txt
 
 fi

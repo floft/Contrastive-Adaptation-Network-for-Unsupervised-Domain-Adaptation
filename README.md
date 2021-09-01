@@ -89,7 +89,7 @@ Example:
 
 **For the time series best-target test:**
 ```
-time ./experiments/scripts/test_best_target.sh ./experiments/config/timeseries/timeseries_test_val_cfg.yaml 0 True timeseries_train2val timeseries_test
+time ./experiments/scripts/test_best_target.sh ./experiments/config/timeseries/timeseries_test_val_cfg.yaml 0 True timeseries_train2val timeseries_test ./experiments/ckpt
 ```
 
 ## Citing
