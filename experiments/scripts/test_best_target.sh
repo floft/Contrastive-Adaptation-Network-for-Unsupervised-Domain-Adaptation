@@ -36,11 +36,13 @@ for ((i=0; i<${#weights[@]}-n; i+=n)); do
 
   if [ x${adapted} = x"True" ]
   then
-    CUDA_VISIBLE_DEVICES=${gpus} python3 ./tools/test.py --cfg ${cfg} --adapted \
-                --exp_name ${exp_name}_${iter} --weights ${weight} 2>&1 | tee ${out_dir}/log_${iter}.txt
+    # CUDA_VISIBLE_DEVICES=${gpus}
+    python3 ./tools/test.py --cfg ${cfg} --adapted \
+      --exp_name ${exp_name}_${iter} --weights ${weight} 2>&1 | tee ${out_dir}/log_${iter}.txt
   else
-    CUDA_VISIBLE_DEVICES=${gpus} python3 ./tools/test.py --cfg ${cfg} \
-                --exp_name ${exp_name}_${iter} --weights ${weight} 2>&1 | tee ${out_dir}/log_${iter}.txt
+    # CUDA_VISIBLE_DEVICES=${gpus}
+    python3 ./tools/test.py --cfg ${cfg} \
+      --exp_name ${exp_name}_${iter} --weights ${weight} 2>&1 | tee ${out_dir}/log_${iter}.txt
   fi
 
   logs+=(${out_dir}/log_${iter}.txt)
