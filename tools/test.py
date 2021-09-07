@@ -48,7 +48,7 @@ def save_preds(paths, preds, save_path, filename='preds.txt'):
             f.write(line)
 
 def prepare_data():
-    test_transform = data_utils.get_transform(False)
+    test_transform = None  # data_utils.get_transform(False)
 
     target = cfg.TEST.DOMAIN
     dataroot_T = os.path.join(cfg.DATASET.DATAROOT, target)

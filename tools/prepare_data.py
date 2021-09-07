@@ -6,8 +6,8 @@ from config.config import cfg
 
 def prepare_data_CAN():
     dataloaders = {}
-    train_transform = data_utils.get_transform(True)
-    test_transform = data_utils.get_transform(False)
+    train_transform = None  # data_utils.get_transform(True)
+    test_transform = None  # data_utils.get_transform(False)
 
     source = cfg.DATASET.SOURCE_NAME
     target = cfg.DATASET.TARGET_NAME
@@ -80,8 +80,8 @@ def prepare_data_CAN():
 
 def prepare_data_MMD():
     dataloaders = {}
-    train_transform = data_utils.get_transform(True)
-    test_transform = data_utils.get_transform(False)
+    train_transform = None  # data_utils.get_transform(True)
+    test_transform = None  # data_utils.get_transform(False)
 
     source = cfg.DATASET.SOURCE_NAME
     target = cfg.DATASET.TARGET_NAME
@@ -126,8 +126,8 @@ def prepare_data_MMD():
 
 def prepare_data_SingleDomainSource():
     dataloaders = {}
-    train_transform = data_utils.get_transform(True)
-    test_transform = data_utils.get_transform(False)
+    train_transform = None  # data_utils.get_transform(True)
+    test_transform = None  # data_utils.get_transform(False)
 
     source = cfg.DATASET.SOURCE_NAME
     target = cfg.DATASET.TARGET_NAME
@@ -164,8 +164,8 @@ def prepare_data_SingleDomainSource():
 
 def prepare_data_SingleDomainTarget():
     dataloaders = {}
-    train_transform = data_utils.get_transform(True)
-    test_transform = data_utils.get_transform(False)
+    train_transform = None  # data_utils.get_transform(True)
+    test_transform = None  # data_utils.get_transform(False)
 
     with open(os.path.join(cfg.DATASET.DATAROOT, 'category.txt'), 'r') as f:
         classes = f.readlines()
