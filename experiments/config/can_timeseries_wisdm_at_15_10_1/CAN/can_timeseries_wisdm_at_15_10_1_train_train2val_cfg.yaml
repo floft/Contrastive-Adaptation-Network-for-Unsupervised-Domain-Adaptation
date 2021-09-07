@@ -35,4 +35,4 @@ TEST:
 
 EVAL_METRIC: "mean_accu"
 SAVE_DIR: "./experiments/ckpt1"
-NUM_WORKERS: 8
+NUM_WORKERS: 1

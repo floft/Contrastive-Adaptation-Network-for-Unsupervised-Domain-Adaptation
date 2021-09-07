@@ -12,6 +12,6 @@ TEST:
 
 EVAL_METRIC: "mean_accu"
 SAVE_DIR: "./experiments/ckpt1"
-NUM_WORKERS: 8
+NUM_WORKERS: 1
 # set the path to the trained model here
 WEIGHTS: "./experiments/ckpt1/${experiment_name}/ckpt_*.weights"
