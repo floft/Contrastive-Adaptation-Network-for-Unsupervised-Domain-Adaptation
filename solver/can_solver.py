@@ -31,7 +31,8 @@ class CANSolver(BaseSolver):
         self.discrepancy_key = 'intra' if self.opt.CDD.INTRA_ONLY else 'cdd'
         self.clustering = clustering.Clustering(self.opt.CLUSTERING.EPS,
                                         self.opt.CLUSTERING.FEAT_KEY,
-                                        self.opt.CLUSTERING.BUDGET)
+                                        self.opt.CLUSTERING.BUDGET,
+                                        self.opt.CLUSTERING.MAX_ITERATIONS)
 
         self.clustered_target_samples = {}
 

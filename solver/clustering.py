@@ -6,7 +6,7 @@ from math import ceil
 
 class DIST(object):
     def __init__(self, dist_type='cos'):
-        self.dist_type = dist_type 
+        self.dist_type = dist_type
 
     def get_dist(self, pointA, pointB, cross=False):
         return getattr(self, self.dist_type)(
@@ -24,7 +24,7 @@ class DIST(object):
             return 0.5 * (1.0 - torch.matmul(pointA, pointB.transpose(0, 1)))
 
 class Clustering(object):
-    def __init__(self, eps, feat_key, max_len=1000, dist_type='cos'):
+    def __init__(self, eps, feat_key, max_len=1000, max_iterations=100000, dist_type='cos'):
         self.eps = eps
         self.Dist = DIST(dist_type)
         self.samples = {}
@@ -33,6 +33,7 @@ class Clustering(object):
         self.stop = False
         self.feat_key = feat_key
         self.max_len = max_len
+        self.max_iterations = max_iterations
 
     def set_init_centers(self, init_centers):
         self.centers = init_centers
@@ -43,7 +44,7 @@ class Clustering(object):
         if centers is None:
             self.stop = False
         else:
-            dist = self.Dist.get_dist(centers, self.centers) 
+            dist = self.Dist.get_dist(centers, self.centers)
             dist = torch.mean(dist, dim=0)
             print('dist %.4f' % dist.item())
             self.stop = dist.item() < self.eps
@@ -61,24 +62,25 @@ class Clustering(object):
 
     def collect_samples(self, net, loader):
         data_feat, data_gt, data_paths = [], [], []
-        for sample in iter(loader): 
+        for sample in iter(loader):
             data = sample['Img'].cuda()
             data_paths += sample['Path']
             if 'Label' in sample.keys():
                 data_gt += [to_cuda(sample['Label'])]
 
             output = net.forward(data)
-            feature = output[self.feat_key].data 
+            feature = output[self.feat_key].data
             data_feat += [feature]
-            
+
         self.samples['data'] = data_paths
         self.samples['gt'] = torch.cat(data_gt, dim=0) \
                     if len(data_gt)>0 else None
         self.samples['feature'] = torch.cat(data_feat, dim=0)
 
     def feature_clustering(self, net, loader):
-        centers = None 
-        self.stop = False 
+        centers = None
+        self.stop = False
+        iteration_count = 0
 
         self.collect_samples(net, loader)
         feature = self.samples['feature']
@@ -91,12 +93,14 @@ class Clustering(object):
             self.clustering_stop(centers)
             if centers is not None:
                 self.centers = centers
-            if self.stop: break
+            if self.stop or iteration_count > self.max_iterations:
+                break
+            iteration_count += 1
 
             centers = 0
             count = 0
 
-            start = 0 
+            start = 0
             for N in range(num_split):
                 cur_len = min(self.max_len, num_samples - start)
                 cur_feature = feature.narrow(0, start, cur_len)
@@ -105,14 +109,14 @@ class Clustering(object):
                 count += torch.sum(labels_onehot, dim=0)
                 labels = labels.unsqueeze(0)
                 mask = (labels == refs).unsqueeze(2).type(torch.cuda.FloatTensor)
-                reshaped_feature = cur_feature.unsqueeze(0)    
+                reshaped_feature = cur_feature.unsqueeze(0)
                 # update centers
                 centers += torch.sum(reshaped_feature * mask, dim=1)
                 start += cur_len
-    
-            mask = (count.unsqueeze(1) > 0).type(torch.cuda.FloatTensor) 
+
+            mask = (count.unsqueeze(1) > 0).type(torch.cuda.FloatTensor)
             centers = mask * centers + (1 - mask) * self.init_centers
-            
+
         dist2center, labels = [], []
         start = 0
         count = 0
@@ -146,4 +150,3 @@ class Clustering(object):
             self.path2label[self.samples['data'][i]] = self.samples['label'][i].item()
 
         del self.samples['feature']
-
