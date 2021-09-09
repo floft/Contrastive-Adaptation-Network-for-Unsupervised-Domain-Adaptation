@@ -1,7 +1,7 @@
 DATASET:
   NUM_CLASSES: 6
   DATAROOT: '../calda-dev/datasets/as_images/'
-  IN_CHANNELS: 6
+  IN_CHANNELS: 3
 
 MODEL:
   FEATURE_EXTRACTOR: 'fcn'

@@ -3,7 +3,7 @@ DATASET:
   DATAROOT: '../calda-dev/datasets/as_images/'
   SOURCE_NAME: ['ucihhar_3_train', 'ucihhar_6_train', 'ucihhar_8_train']
   TARGET_NAME: "ucihhar_1_train"
-  IN_CHANNELS: 6
+  IN_CHANNELS: 3
 
 MODEL:
   FEATURE_EXTRACTOR: 'fcn'
