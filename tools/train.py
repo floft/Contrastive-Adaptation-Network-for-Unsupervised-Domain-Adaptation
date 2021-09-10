@@ -32,7 +32,21 @@ def parse_args():
     parser.add_argument('--exp_name', dest='exp_name',
                         help='the experiment name',
                         default='exp', type=str)
-
+    parser.add_argument('--base_lr', dest='base_lr',
+                        help='TRAIN.BASE_LR',
+                        default=None, type=float)
+    parser.add_argument('--train_source_batch_size', dest='train_source_batch_size',
+                        help='TRAIN.SOURCE_BATCH_SIZE and TRAIN.TARGET_BATCH_SIZE',
+                        default=None, type=int)
+    parser.add_argument('--inv_alpha', dest='inv_alpha',
+                        help='INV.ALPHA',
+                        default=None, type=float)
+    parser.add_argument('--inv_beta', dest='inv_beta',
+                        help='INV.BETA',
+                        default=None, type=float)
+    parser.add_argument('--loss_weight', dest='loss_weight',
+                        help='CDD.LOSS_WEIGHT and MMD.LOSS_WEIGHT',
+                        default=None, type=float)
 
     if len(sys.argv) == 1:
         parser.print_help()
@@ -123,6 +137,25 @@ if __name__ == '__main__':
         cfg.MODEL = args.weights
     if args.exp_name is not None:
         cfg.EXP_NAME = args.exp_name
+
+    # Hyperparameters we will tune
+    if args.base_lr is not None:
+        print("Overriding config: TRAIN.BASE_LR")
+        cfg.TRAIN.BASE_LR = args.base_lr
+    if args.train_source_batch_size is not None:
+        print("Overriding config: TRAIN.{SOURCE_BATCH_SIZE,TARGET_BATCH_SIZE}")
+        cfg.TRAIN.SOURCE_BATCH_SIZE = args.train_source_batch_size
+        cfg.TRAIN.TARGET_BATCH_SIZE = args.train_source_batch_size
+    if args.inv_alpha is not None:
+        print("Overriding config: INV.ALPHA")
+        cfg.INV.ALPHA = args.inv_alpha
+    if args.inv_beta is not None:
+        print("Overriding config: INV.BETA")
+        cfg.INV.BETA = args.inv_beta
+    if args.loss_weight is not None:
+        print("Overriding config: {CDD,MMD}.LOSS_WEIGHT")
+        cfg.CDD.LOSS_WEIGHT = args.loss_weight
+        cfg.MMD.LOSS_WEIGHT = args.loss_weight
 
     print('Using config:')
     pprint.pprint(cfg)
