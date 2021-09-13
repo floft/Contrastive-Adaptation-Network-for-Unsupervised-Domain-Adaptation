@@ -1,7 +1,7 @@
 #!/bin/bash
 
 export PYTHONPATH="`pwd`:${PYTHONPATH}"
-if [ $# != 4 ]
+if [ $# -lt 4 ]
 then
   echo "Please specify 1) cfg; 2) gpus; 3) method; 4) exp_name."
   exit
