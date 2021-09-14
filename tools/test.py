@@ -53,9 +53,13 @@ def prepare_data():
     target = cfg.TEST.DOMAIN
     dataroot_T = os.path.join(cfg.DATASET.DATAROOT, target)
 
-    with open(os.path.join(cfg.DATASET.DATAROOT, 'category.txt'), 'r') as f:
-        classes = f.readlines()
-        classes = [c.strip() for c in classes]
+    # with open(os.path.join(cfg.DATASET.DATAROOT, 'category.txt'), 'r') as f:
+    #     classes = f.readlines()
+    #     classes = [c.strip() for c in classes]
+
+    # We'll just use string integers for the labels - the number of classes
+    # varies for each dataset
+    classes = [str(x) for x in range(cfg.DATASET.NUM_CLASSES)]
     assert(len(classes) == cfg.DATASET.NUM_CLASSES)
 
     dataloader = None

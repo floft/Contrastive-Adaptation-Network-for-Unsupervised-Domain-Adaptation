@@ -17,9 +17,13 @@ def prepare_data_CAN():
     ]
     dataroot_T = os.path.join(cfg.DATASET.DATAROOT, target)
 
-    with open(os.path.join(cfg.DATASET.DATAROOT, 'category.txt'), 'r') as f:
-        classes = f.readlines()
-        classes = [c.strip() for c in classes]
+    # with open(os.path.join(cfg.DATASET.DATAROOT, 'category.txt'), 'r') as f:
+    #     classes = f.readlines()
+    #     classes = [c.strip() for c in classes]
+
+    # We'll just use string integers for the labels - the number of classes
+    # varies for each dataset
+    classes = [str(x) for x in range(cfg.DATASET.NUM_CLASSES)]
     assert(len(classes) == cfg.DATASET.NUM_CLASSES)
 
     # for clustering
@@ -91,9 +95,13 @@ def prepare_data_MMD():
     ]
     dataroot_T = os.path.join(cfg.DATASET.DATAROOT, target)
 
-    with open(os.path.join(cfg.DATASET.DATAROOT, 'category.txt'), 'r') as f:
-        classes = f.readlines()
-        classes = [c.strip() for c in classes]
+    # with open(os.path.join(cfg.DATASET.DATAROOT, 'category.txt'), 'r') as f:
+    #     classes = f.readlines()
+    #     classes = [c.strip() for c in classes]
+
+    # We'll just use string integers for the labels - the number of classes
+    # varies for each dataset
+    classes = [str(x) for x in range(cfg.DATASET.NUM_CLASSES)]
     assert(len(classes) == cfg.DATASET.NUM_CLASSES)
 
     batch_size = cfg.TRAIN.SOURCE_BATCH_SIZE
@@ -137,9 +145,13 @@ def prepare_data_SingleDomainSource():
     ]
     dataroot_T = os.path.join(cfg.DATASET.DATAROOT, target)
 
-    with open(os.path.join(cfg.DATASET.DATAROOT, 'category.txt'), 'r') as f:
-        classes = f.readlines()
-        classes = [c.strip() for c in classes]
+    # with open(os.path.join(cfg.DATASET.DATAROOT, 'category.txt'), 'r') as f:
+    #     classes = f.readlines()
+    #     classes = [c.strip() for c in classes]
+
+    # We'll just use string integers for the labels - the number of classes
+    # varies for each dataset
+    classes = [str(x) for x in range(cfg.DATASET.NUM_CLASSES)]
     assert(len(classes) == cfg.DATASET.NUM_CLASSES)
 
     batch_size = cfg.TRAIN.SOURCE_BATCH_SIZE
@@ -167,9 +179,13 @@ def prepare_data_SingleDomainTarget():
     train_transform = None  # data_utils.get_transform(True)
     test_transform = None  # data_utils.get_transform(False)
 
-    with open(os.path.join(cfg.DATASET.DATAROOT, 'category.txt'), 'r') as f:
-        classes = f.readlines()
-        classes = [c.strip() for c in classes]
+    # with open(os.path.join(cfg.DATASET.DATAROOT, 'category.txt'), 'r') as f:
+    #     classes = f.readlines()
+    #     classes = [c.strip() for c in classes]
+
+    # We'll just use string integers for the labels - the number of classes
+    # varies for each dataset
+    classes = [str(x) for x in range(cfg.DATASET.NUM_CLASSES)]
     assert(len(classes) == cfg.DATASET.NUM_CLASSES)
 
     target = cfg.DATASET.TARGET_NAME
