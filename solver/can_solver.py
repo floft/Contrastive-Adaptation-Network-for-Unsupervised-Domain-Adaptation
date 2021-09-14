@@ -280,7 +280,9 @@ class CANSolver(BaseSolver):
             self.opt.TRAIN.TEST_INTERVAL = min(1.0, self.opt.TRAIN.TEST_INTERVAL)
             self.opt.TRAIN.SAVE_CKPT_INTERVAL = min(1.0, self.opt.TRAIN.SAVE_CKPT_INTERVAL)
 
+            # added second condition since sometimes there's a "ZeroDivisionError: integer division or modulo by zero" error - only on job 310
             if self.opt.TRAIN.TEST_INTERVAL > 0 and \
+        int(self.opt.TRAIN.TEST_INTERVAL * self.iters_per_loop) != 0 and \
 		(update_iters+1) % int(self.opt.TRAIN.TEST_INTERVAL * self.iters_per_loop) == 0:
                 with torch.no_grad():
                     self.net.module.set_bn_domain(self.bn_domain_map[self.target_name])
@@ -288,7 +290,9 @@ class CANSolver(BaseSolver):
                     print('Test at (loop %d, iters: %d) with %s: %.4f.' % (self.loop,
                               self.iters, self.opt.EVAL_METRIC, accu))
 
+            # added second condition since sometimes there's a "ZeroDivisionError: integer division or modulo by zero" error - only on job 310
             if self.opt.TRAIN.SAVE_CKPT_INTERVAL > 0 and \
+        int(self.opt.TRAIN.SAVE_CKPT_INTERVAL * self.iters_per_loop) != 0 and \
 		(update_iters+1) % int(self.opt.TRAIN.SAVE_CKPT_INTERVAL * self.iters_per_loop) == 0:
                 self.save_ckpt()
 

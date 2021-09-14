@@ -19,7 +19,8 @@ savedir=${6}  # probably: ./experiments/ckpt
 # we have only 9 total and one of those is the final model (so we do it in
 # reverse and always include the 0th, i.e. last, in the tested models).
 weights=($(ls -t $savedir/${train_exp_name}/ckpt_*.weights))
-n=$((${#weights[@]} / 9))
+# Don't break if there's less than 9 weights
+(( ${#weights[@]} >= 9 )) && n=$((${#weights[@]} / 9)) || n=1
 logs=()
 
 # for weight in "${weights[@]}"; do
