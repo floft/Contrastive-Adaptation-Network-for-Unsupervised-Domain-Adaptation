@@ -1,0 +1,38 @@
+DATASET:
+  NUM_CLASSES: 7
+  DATAROOT: '../calda-dev/datasets/as_images/'
+  SOURCE_NAME: ['myo_1_train', 'myo_2_train', 'myo_3_train', 'myo_5_train', 'myo_6_train', 'myo_7_train', 'myo_8_train', 'myo_9_train', 'myo_10_train', 'myo_11_train', 'myo_12_train', 'myo_13_train', 'myo_14_train', 'myo_15_train', 'myo_16_train', 'myo_17_train', 'myo_18_train', 'myo_19_train', 'myo_20_train', 'myo_22_train', 'myo_24_train', 'myo_25_train', 'myo_26_train', 'myo_27_train', 'myo_28_train', 'myo_29_train', 'myo_30_train', 'myo_31_train', 'myo_34_train', 'myo_35_train', 'myo_36_train', 'myo_37_train', 'myo_38_train', 'myo_39_train']
+  TARGET_NAME: "myo_33_train"
+  IN_CHANNELS: 8
+
+MODEL:
+  FEATURE_EXTRACTOR: 'fcn'
+
+TRAIN:
+  SOURCE_BATCH_SIZE: 30
+  SOURCE_CLASS_BATCH_SIZE: 10
+  TARGET_CLASS_BATCH_SIZE: 10
+  NUM_SELECTED_CLASSES: 7
+  LR_SCHEDULE: inv
+  UPDATE_EPOCH_PERCENTAGE: 0.2
+
+CLUSTERING:
+  TARGET_BATCH_SIZE: 600
+  SOURCE_BATCH_SIZE: 600
+  BUDGET: 1000
+  FILTERING_THRESHOLD: 1.0
+
+INV:
+  ALPHA: 0.0005
+  BETA: 2.25
+
+CDD:
+  LOSS_WEIGHT: 0.3
+
+TEST:
+  BATCH_SIZE: 100
+  DOMAIN: "myo_33_test"
+
+EVAL_METRIC: "mean_accu"
+SAVE_DIR: "./experiments/ckpt1"
+NUM_WORKERS: 1
