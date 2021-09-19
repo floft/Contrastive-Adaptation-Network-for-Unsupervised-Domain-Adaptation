@@ -6,6 +6,7 @@ import random
 from math import ceil
 import torch
 import numpy as np
+from .utils import class_load_from_pickle, dataloading_is_v2
 
 class CategoricalDataset(Dataset):
     def __init__(self):
@@ -52,9 +53,12 @@ class CategoricalDataset(Dataset):
         data['Path'] = path
         assert(len(path) > 0)
         for p in path:
-            # img = Image.open(p).convert('RGB')
-            img = np.load(p, allow_pickle=False)
-            img = torch.from_numpy(img)
+            if dataloading_is_v2(p):
+                img = class_load_from_pickle(self, p)
+            else:
+                # img = Image.open(p).convert('RGB')
+                img = np.load(p, allow_pickle=False)
+                img = torch.from_numpy(img)
             # if self.transform is not None:
             #     img = self.transform(img)
 
@@ -132,11 +136,17 @@ class CategoricalSTDataset(Dataset):
             data['Path_'+d] = path
             assert(len(path) > 0)
             for p in path:
-                # img = Image.open(p).convert('RGB')
-                img = np.load(p, allow_pickle=False)
-                img = torch.from_numpy(img)
+                if dataloading_is_v2(p):
+                    img = class_load_from_pickle(self, p)
+                else:
+                    # img = Image.open(p).convert('RGB')
+                    img = np.load(p, allow_pickle=False)
+                    img = torch.from_numpy(img)
                 # if self.transform is not None:
                 #     img = self.transform(img)
+
+                if not isinstance(img, torch.Tensor):
+                    img = torch.tensor(img)
 
                 if 'Img_'+d not in data:
                     data['Img_'+d] = [img]

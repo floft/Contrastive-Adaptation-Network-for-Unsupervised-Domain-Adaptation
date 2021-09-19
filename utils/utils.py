@@ -36,5 +36,3 @@ def mean_accuracy(preds, target):
 def accuracy(preds, target):
     preds = torch.max(preds, dim=1).indices
     return 100.0 * torch.sum(preds == target).item() / preds.size(0)
-
-

@@ -4,6 +4,7 @@ from .image_folder import make_dataset_with_labels, make_dataset
 from PIL import Image
 from torch.utils.data import Dataset
 import numpy as np
+from .utils import class_load_from_pickle, dataloading_is_v2
 
 class BaseDataset(Dataset):
     def __init__(self):
@@ -14,12 +15,18 @@ class BaseDataset(Dataset):
 
     def __getitem__(self, index):
         path = self.data_paths[index]
-        # img = Image.open(path).convert('RGB')
-        img = np.load(path, allow_pickle=False)
-        img = torch.from_numpy(img)
+        if dataloading_is_v2(path):
+            img = class_load_from_pickle(self, path)
+        else:
+            # img = Image.open(path).convert('RGB')
+            img = np.load(path, allow_pickle=False)
+            img = torch.from_numpy(img)
         # if self.transform is not None:
         #     img = self.transform(img)
         label = self.data_labels[index]
+
+        if not isinstance(img, torch.Tensor):
+            img = torch.tensor(img)
 
         return {'Path': path, 'Img': img, 'Label': label}
 
@@ -54,11 +61,17 @@ class BaseDatasetWithoutLabel(Dataset):
 
     def __getitem__(self, index):
         path = self.data_paths[index]
-        # img = Image.open(path).convert('RGB')
-        img = np.load(path, allow_pickle=False)
-        img = torch.from_numpy(img)
+        if dataloading_is_v2(path):
+            img = class_load_from_pickle(self, path)
+        else:
+            # img = Image.open(path).convert('RGB')
+            img = np.load(path, allow_pickle=False)
+            img = torch.from_numpy(img)
         # if self.transform is not None:
         #     img = self.transform(img)
+
+        if not isinstance(img, torch.Tensor):
+            img = torch.tensor(img)
 
         return {'Path': path, 'Img': img}
 

@@ -11,6 +11,7 @@ from PIL import Image
 import os
 import os.path
 import collections
+from .utils import load_all_from_pickle, load_class_from_pickle
 
 DATA_EXTENSIONS = [
     '.npy',
@@ -32,23 +33,28 @@ def make_dataset_with_labels(dir, classnames):
 
         return images, labels
 
-    assert os.path.isdir(dir), '%s is not a valid directory' % dir
+    # Pickle file - v2
+    if os.path.exists(dir + ".pickle"):
+        images, labels = load_all_from_pickle(dir + ".pickle")
+    # Actual directory - v1
+    elif os.path.isdir(dir):
+        images = []
+        labels = []
 
-    images = []
-    labels = []
+        for root, _, fnames in sorted(os.walk(dir, followlinks=True)):
+            for fname in fnames:
+                dirname = os.path.split(root)[-1]
+                if dirname not in classnames:
+                    continue
 
-    for root, _, fnames in sorted(os.walk(dir, followlinks=True)):
-        for fname in fnames:
-            dirname = os.path.split(root)[-1]
-            if dirname not in classnames:
-                continue
+                label = classnames.index(dirname)
 
-            label = classnames.index(dirname)
-
-            if is_image_file(fname):
-                path = os.path.join(root, fname)
-                images.append(path)
-                labels.append(label)
+                if is_image_file(fname):
+                    path = os.path.join(root, fname)
+                    images.append(path)
+                    labels.append(label)
+    else:
+        raise NotImplementedError
 
     return images, labels
 
@@ -62,17 +68,20 @@ def make_dataset_classwise(dir, category):
 
         return images
 
-    assert os.path.isdir(dir), '%s is not a valid directory' % dir
-
-    images = []
-    for root, _, fnames in sorted(os.walk(dir, followlinks=True)):
-        for fname in fnames:
-            dirname = os.path.split(root)[-1]
-            if dirname != category:
-                continue
-            if is_image_file(fname):
-                path = os.path.join(root, fname)
-                images.append(path)
+    if os.path.exists(dir + ".pickle"):
+        images = load_class_from_pickle(dir + ".pickle", category)
+    elif os.path.isdir(dir):
+        images = []
+        for root, _, fnames in sorted(os.walk(dir, followlinks=True)):
+            for fname in fnames:
+                dirname = os.path.split(root)[-1]
+                if dirname != category:
+                    continue
+                if is_image_file(fname):
+                    path = os.path.join(root, fname)
+                    images.append(path)
+    else:
+        raise NotImplementedError
 
     return images
 
@@ -87,12 +96,15 @@ def make_dataset(dir):
         return images
 
     images = []
-    assert os.path.isdir(dir), '%s is not a valid directory' % dir
-
-    for root, _, fnames in sorted(os.walk(dir, followlinks=True)):
-        for fname in fnames:
-            if is_image_file(fname):
-                path = os.path.join(root, fname)
-                images.append(path)
+    if os.path.exists(dir + ".pickle"):
+        images, _ = load_all_from_pickle(dir + ".pickle")
+    elif os.path.isdir(dir):
+        for root, _, fnames in sorted(os.walk(dir, followlinks=True)):
+            for fname in fnames:
+                if is_image_file(fname):
+                    path = os.path.join(root, fname)
+                    images.append(path)
+    else:
+        raise NotImplementedError
 
     return images
