@@ -1,6 +1,6 @@
 DATASET:
   NUM_CLASSES: 7
-  DATAROOT: '../calda-dev/datasets/as_images/'
+  DATAROOT: '../calda/datasets/as_images/'
   IN_CHANNELS: 8
 
 MODEL:

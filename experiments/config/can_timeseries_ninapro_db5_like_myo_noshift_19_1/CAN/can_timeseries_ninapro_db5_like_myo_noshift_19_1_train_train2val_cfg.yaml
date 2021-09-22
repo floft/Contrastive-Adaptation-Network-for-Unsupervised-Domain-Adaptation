@@ -1,6 +1,6 @@
 DATASET:
   NUM_CLASSES: 7
-  DATAROOT: '../calda-dev/datasets/as_images/'
+  DATAROOT: '../calda/datasets/as_images/'
   SOURCE_NAME: ['ninapro_db5_like_myo_noshift_3_train', 'ninapro_db5_like_myo_noshift_6_train', 'ninapro_db5_like_myo_noshift_7_train', 'ninapro_db5_like_myo_noshift_8_train']
   TARGET_NAME: "ninapro_db5_like_myo_noshift_0_train"
   IN_CHANNELS: 8

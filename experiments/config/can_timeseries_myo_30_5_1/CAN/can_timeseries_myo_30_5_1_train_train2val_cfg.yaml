@@ -1,6 +1,6 @@
 DATASET:
   NUM_CLASSES: 7
-  DATAROOT: '../calda-dev/datasets/as_images/'
+  DATAROOT: '../calda/datasets/as_images/'
   SOURCE_NAME: ['myo_1_train', 'myo_3_train', 'myo_4_train', 'myo_5_train', 'myo_9_train', 'myo_14_train', 'myo_26_train', 'myo_27_train', 'myo_29_train', 'myo_36_train']
   TARGET_NAME: "myo_33_train"
   IN_CHANNELS: 8

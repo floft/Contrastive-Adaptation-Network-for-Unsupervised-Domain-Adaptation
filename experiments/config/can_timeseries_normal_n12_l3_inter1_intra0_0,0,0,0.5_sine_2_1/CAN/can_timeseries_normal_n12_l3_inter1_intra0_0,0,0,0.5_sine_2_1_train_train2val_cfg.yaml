@@ -1,6 +1,6 @@
 DATASET:
   NUM_CLASSES: 3
-  DATAROOT: '../calda-dev/datasets/as_images/'
+  DATAROOT: '../calda/datasets/as_images/'
   SOURCE_NAME: ['normal_n12_l3_inter1_intra0_0,0,0,0.5_sine_9_train', 'normal_n12_l3_inter1_intra0_0,0,0,0.5_sine_11_train']
   TARGET_NAME: "normal_n12_l3_inter1_intra0_0,0,0,0.5_sine_0_train"
   IN_CHANNELS: 1
