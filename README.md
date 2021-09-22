@@ -1,76 +1,25 @@
 # Contrastive Adaptation Network
-**2021-08-31: Modified version for time series datasets, replacing the feature extractor with the time-series compatible feature extractor from CoDATS**
 
-2020-10-17: We have extended our method to the multi-source domain adaptation scenario. Please refer to our TPAMI paper [Contrastive Adaptation Network for Single- and Multi-Source Domain Adaptation](https://ieeexplore.ieee.org/stamp/stamp.jsp?tp=&arnumber=9219132) for more details. We will release our code for the multi-source domain adaptation soon.
+This repo contains a modified version of [Contrastive Adaptation Network (CAN)](http://openaccess.thecvf.com/content_CVPR_2019/papers/Kang_Contrastive_Adaptation_Network_for_Unsupervised_Domain_Adaptation_CVPR_2019_paper.pdf) for time series datasets. We replaced the image feature extractor (ResNet) with the time-series compatible feature extractor from CoDATS. This allows a comparison of CAN with our time series contrastive domain adaptation method [CALDA](https://github.com/floft/calda).
 
-2019-11: This is the Pytorch implementation for our CVPR 2019 paper [Contrastive Adaptation Network for Unsupervised Domain Adaptation](http://openaccess.thecvf.com/content_CVPR_2019/papers/Kang_Contrastive_Adaptation_Network_for_Unsupervised_Domain_Adaptation_CVPR_2019_paper.pdf). As we reorganized our code based on a new pytorch version, some hyper-parameters are slightly different from the paper.
+## Dependencies
+Below we list which packages and versions we used, though likely the exact versions are not required:
 
-## Requirements
-- Python 3.7
-- Pytorch 1.1
-- PyYAML 5.1.1
+- Python 3.7.4
+- PyTorch 1.9.0
+- PyYAML 5.3.1
+- torchvision 0.10.0
+- torchinfo 1.5.3
+- easydict 1.9
+- pickle5 0.0.11
 
-## Dataset
-The structure of the dataset should be like
+## Datasets
 
-```
-Office-31
-|_ category.txt
-|_ amazon
-|  |_ back_pack
-|     |_ <im-1-name>.jpg
-|     |_ ...
-|     |_ <im-N-name>.jpg
-|  |_ bike
-|     |_ <im-1-name>.jpg
-|     |_ ...
-|     |_ <im-N-name>.jpg
-|  |_ ...
-|_ dslr
-|  |_ back_pack
-|     |_ <im-1-name>.jpg
-|     |_ ...
-|     |_ <im-N-name>.jpg
-|  |_ bike
-|     |_ <im-1-name>.jpg
-|     |_ ...
-|     |_ <im-N-name>.jpg
-|  |_ ...
-|_ ...
-```
-The "category.txt" contains the names of all the categories, which is like
-```
-back_pack
-bike
-bike_helmet
-...
-```
-
-**For VIS-DA 2017**, follow the [official instructions](https://github.com/VisionLearningGroup/taskcv-2017-public/tree/master/classification), but only for the train/validation sets (what is used in the paper):
-
-    cd ./experiments/dataset/VisDA-2017/
-    wget http://csr.bu.edu/ftp/visda17/clf/train.tar
-    wget http://csr.bu.edu/ftp/visda17/clf/validation.tar
-    wget http://csr.bu.edu/ftp/visda17/clf/test.tar
-    tar xvf train.tar
-    tar xvf validation.tar
-    tar xvf test.tar
-    wget https://raw.githubusercontent.com/VisionLearningGroup/taskcv-2017-public/master/classification/data/image_list.txt
+For time series datasets, see [CALDA](https://github.com/floft/calda) instructions. That repository contains the scripts to generate the pickle files used by this code. Note CALDA should be cloned in `../calda`, i.e. in the parent directory of this repo.
 
 ## Training
-```
-./experiments/scripts/train.sh ${config_yaml} ${gpu_ids} ${adaptation_method} ${experiment_name}
-```
-For example, for the Office-31 dataset,
-```
-./experiments/scripts/train.sh ./experiments/config/Office-31/CAN/office31_train_amazon2dslr_cfg.yaml 0 CAN office31_a2d
-```
-for the VisDA-2017 dataset,
-```
-./experiments/scripts/train.sh ./experiments/config/VisDA-2017/CAN/visda17_train_train2val_cfg.yaml 0 CAN visda17_train2val
-```
 
-**For the time series training:**
+For the time series training:
 ```
 time ./experiments/scripts/train.sh ./experiments/config/timeseries/CAN/timeseries_train_train2val_cfg.yaml 0 CAN timeseries_train2val
 ```
@@ -79,21 +28,13 @@ The experiment log file and the saved checkpoints will be stored at ./experiment
 
 ## Test
 
-```
-./experiments/scripts/test.sh ${config_yaml} 0 ${if_adapted} ${experiment_name}
-```
-Example:
-```
-./experiments/scripts/test.sh ./experiments/config/Office-31/office31_test_amazon_cfg.yaml 0 True visda17_test
-```
-
-**For the time series best-target test:**
+For the time series best-target evaluation (i.e. using a comparable model selection methodology as CALDA):
 ```
 time ./experiments/scripts/test_best_target.sh ./experiments/config/timeseries/timeseries_test_val_cfg.yaml 0 True timeseries_train2val timeseries_test ./experiments/ckpt
 ```
 
 ## Citing
-Please cite our paper if you use our code in your research:
+Please cite their paper if you use their code in your research:
 ```
 @article{kangcontrastive,
   title={Contrastive Adaptation Network for Single-and Multi-Source Domain Adaptation},
@@ -110,8 +51,6 @@ Please cite our paper if you use our code in your research:
   year={2019}
 }
 ```
-## Contact
-If you have any questions, please contact me via kgl.prml@gmail.com.
 
 ## Thanks to third party
 The way of setting configurations is inspired by <https://github.com/rbgirshick/py-faster-rcnn>.
